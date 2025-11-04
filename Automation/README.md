@@ -11,7 +11,7 @@ Automation/
 │
 ├── Business_Units/
 │   └── Marketing/
-│       └── Stage2_Marketing/        # Stage 2 automation for Marketing BU
+│       └── Stage2/        # Stage 2 automation for Marketing BU
 │           ├── agents/              # 5 AI agents
 │           ├── docs/                # Documentation
 │           ├── config.py            # Configuration
@@ -36,7 +36,7 @@ This folder contains all automation code for the BU External Research project:
 
 ## 📦 Current Automations
 
-### Business_Units/Marketing/Stage2_Marketing
+### Business_Units/Marketing/Stage2
 **Purpose**: Enrich Marketing AI use cases to premium consulting quality
 
 **What it does**:
@@ -47,11 +47,11 @@ This folder contains all automation code for the BU External Research project:
 
 **How to run**:
 ```bash
-cd Business_Units/Marketing/Stage2_Marketing
+cd Business_Units/Marketing/Stage2
 run_automation.bat
 ```
 
-**Documentation**: See [Business_Units/Marketing/Stage2_Marketing/README.md](Business_Units/Marketing/Stage2_Marketing/README.md)
+**Documentation**: See [Business_Units/Marketing/Stage2/README.md](Business_Units/Marketing/Stage2/README.md)
 
 ---
 
@@ -68,8 +68,8 @@ run_automation.bat
    - `Business_Units/Legal/` - Legal automations (future)
 
 3. **Organized by Stage**
-   - `Stage2_Marketing/` - Stage 2 for Marketing
-   - `Stage3_Marketing/` - Stage 3 for Marketing (future)
+   - `Stage2/` - Stage 2 for Marketing
+   - `Stage3/` - Stage 3 for Marketing (future)
    - etc.
 
 4. **Scalable**
@@ -124,9 +124,9 @@ Automation/Business_Units/Marketing/Stage3_Marketing/
 
 | Automation | Location | Run Command |
 |------------|----------|-------------|
-| Marketing Stage 2 | `Business_Units/Marketing/Stage2_Marketing/` | `cd Business_Units/Marketing/Stage2_Marketing && run_automation.bat` |
-| (Future) Finance Stage 2 | `Business_Units/Finance/Stage2_Finance/` | `cd Business_Units/Finance/Stage2_Finance && run_automation.bat` |
-| (Future) Legal Stage 2 | `Business_Units/Legal/Stage2_Legal/` | `cd Business_Units/Legal/Stage2_Legal && run_automation.bat` |
+| Marketing Stage 2 | `Business_Units/Marketing/Stage2/` | `cd Business_Units/Marketing/Stage2 && run_automation.bat` |
+| (Future) Finance Stage 2 | `Business_Units/Finance/Stage2/` | `cd Business_Units/Finance/Stage2 && run_automation.bat` |
+| (Future) Legal Stage 2 | `Business_Units/Legal/Stage2/` | `cd Business_Units/Legal/Stage2 && run_automation.bat` |
 
 ---
 

@@ -2,7 +2,7 @@
 
 ## ✅ Clean Structure - All Duplicates Removed!
 
-**Location**: `Automation/Business_Units/Marketing/Stage2_Marketing/`
+**Location**: `Automation/Business_Units/Marketing/Stage2/`
 
 This is the **ONLY** location for Stage 2 Marketing automation. All duplicates have been removed.
 
@@ -30,7 +30,7 @@ run_automation.bat
 ## 📁 What's Here (19 Files)
 
 ```
-Stage2_Marketing/
+Stage2/
 ├── agents/                     # 5 AI Agents
 │   ├── agent1_data_ingestion.py
 │   ├── agent2_web_research.py
@@ -110,7 +110,7 @@ BU-External-Research/           # Root is now CLEAN
 ├── Automation/                 # ✅ All automation here
 │   └── Business_Units/
 │       └── Marketing/
-│           └── Stage2_Marketing/  ← YOU ARE HERE
+│           └── Stage2/  ← YOU ARE HERE
 │
 ├── data/                       # ✅ All data files
 │   └── Business Units/
@@ -145,7 +145,7 @@ BU-External-Research/           # Root is now CLEAN
 - ❌ `data/.../Marketing/Stage 2/automation/` (duplicate)
 
 **Kept (ONE location)**:
-- ✅ `Automation/Business_Units/Marketing/Stage2_Marketing/` ← YOU ARE HERE
+- ✅ `Automation/Business_Units/Marketing/Stage2/` ← YOU ARE HERE
 
 ---
 

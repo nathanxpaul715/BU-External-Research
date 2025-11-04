@@ -1,14 +1,14 @@
 @echo off
 REM Stage 2 Marketing Automation - Windows Batch Runner
-REM Runs from: Automation/Stage2_Marketing/
-REM Uses venv from: root (../../venv)
+REM Runs from: Automation/Business_Units/Marketing/Stage2/
+REM Uses venv from: root (../../../../venv)
 
 echo ========================================
 echo Stage 2 Marketing Automation
 echo ========================================
 echo.
 
-REM Path to root venv (4 levels up from Automation/Business_Units/Marketing/Stage2_Marketing)
+REM Path to root venv (4 levels up from Automation/Business_Units/Marketing/Stage2)
 set VENV_PATH=..\..\..\..\venv\Scripts\python.exe
 
 REM Check if venv exists

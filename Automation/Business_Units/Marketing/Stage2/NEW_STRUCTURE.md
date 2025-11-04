@@ -15,7 +15,7 @@ BU-External-Research/                          # ROOT
 │   │
 │   ├── README.md                              # Automation folder documentation
 │   │
-│   └── Stage2_Marketing/                      # Stage 2 for Marketing
+│   └── Business_Units/Marketing/Stage2/       # Stage 2 for Marketing
 │       │
 │       ├── agents/                            # 5 AI Agents
 │       │   ├── __init__.py
@@ -76,7 +76,7 @@ BU-External-Research/
 ```
 BU-External-Research/
 ├── Automation/                      ✅ Centralized automation
-│   └── Stage2_Marketing/            ✅ Organized by stage + BU
+│   └── Business_Units/Marketing/Stage2/ ✅ Organized by BU + stage
 │       ├── agents/                  ✅ All agents together
 │       ├── docs/                    ✅ All docs together
 │       └── *.py, *.bat              ✅ All scripts together
