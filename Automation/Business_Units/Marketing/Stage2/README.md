@@ -10,7 +10,7 @@
 BU-External-Research/                    # Root
 │
 ├── Automation/                          # ✨ All automation code here
-│   └── Stage2_Marketing/                # Stage 2 for Marketing BU
+│   └── Business_Units/Marketing/Stage2/ # Stage 2 for Marketing BU
 │       ├── agents/                      # 5 AI agents
 │       ├── docs/                        # Documentation
 │       ├── config.py                    # Configuration
@@ -54,13 +54,13 @@ run_automation.bat
 
 ### Option 2: Command Line
 ```bash
-# From Automation/Stage2_Marketing directory
-..\..\venv\Scripts\python.exe run_automation.py
+# From Automation/Business_Units/Marketing/Stage2 directory
+..\..\..\..\venv\Scripts\python.exe run_automation.py
 ```
 
 ### Option 3: Fast Mode (Skip Web Research)
 ```bash
-..\..\venv\Scripts\python.exe run_automation.py --skip-web-research
+..\..\..\..\venv\Scripts\python.exe run_automation.py --skip-web-research
 ```
 
 ---
@@ -157,7 +157,7 @@ For 3 use cases
 ## 🔄 File Relationships
 
 ```
-Automation/Stage2_Marketing/          (automation code)
+Automation/Business_Units/Marketing/Stage2/  (automation code)
          ↓ reads from
 data/Business Units/Marketing/        (input data)
          ↓ processes

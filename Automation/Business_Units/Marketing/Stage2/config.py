@@ -2,8 +2,8 @@
 import os
 
 # Base paths - Automation folder is at root level
-AUTOMATION_DIR = os.path.dirname(os.path.abspath(__file__))  # Automation/Business_Units/Marketing/Stage2_Marketing
-# Go up 4 levels: Stage2_Marketing -> Marketing -> Business_Units -> Automation -> BU-External-Research
+AUTOMATION_DIR = os.path.dirname(os.path.abspath(__file__))  # Automation/Business_Units/Marketing/Stage2
+# Go up 4 levels: Stage2 -> Marketing -> Business_Units -> Automation -> BU-External-Research
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(AUTOMATION_DIR))))
 DATA_DIR = os.path.join(ROOT_DIR, "data", "Business Units", "Marketing")
 

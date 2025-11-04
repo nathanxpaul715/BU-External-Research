@@ -37,14 +37,14 @@ if exist "%VENV_PATH%" (
     echo [OK] Virtual environment created
     echo.
     echo Installing required packages...
-    venv\Scripts\pip.exe install -r Automation\Stage2_Marketing\requirements.txt
+    venv\Scripts\pip.exe install -r Automation\Business_Units\Marketing\Stage2\requirements.txt
     if errorlevel 1 (
         echo ERROR: Failed to install packages
         pause
         exit /b 1
     )
     echo [OK] All packages installed
-    cd Automation\Stage2_Marketing
+    cd Automation\Business_Units\Marketing\Stage2
 )
 
 echo.
