@@ -2,6 +2,7 @@
 Enriches each use case with all required sections using BU Intelligence context and research data
 """
 import json
+import time
 from typing import Dict, List, Any
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -29,98 +30,80 @@ class UseCaseEnricherAgent:
     ) -> str:
         """Create comprehensive enrichment prompt"""
 
-        prompt = f"""You are a Senior Management Consultant (15+ years, McKinsey/BCG caliber) tasked with enriching an AI use case to premium consulting quality.
+        # Limit BU intelligence to reduce token usage
+        bu_context = bu_intelligence[:6000] if len(bu_intelligence) > 6000 else bu_intelligence
 
-=== USE CASE TO ENRICH ===
-Original Name: {use_case['original_name']}
+        # Format research data concisely
+        research_summary = self._format_research_summary(research_data)
+
+        prompt = f"""You are a Senior Management Consultant enriching an AI use case. Return ONLY valid JSON.
+
+USE CASE:
+Name: {use_case['original_name']}
 Function: {use_case['function']}
-Original Description: {use_case['original_description']}
-Original Outcomes: {use_case['original_outcomes']}
-AI Tools: {use_case['ai_tools']}
+Description: {use_case['original_description']}
+Tools: {use_case['ai_tools']}
 Stage: {use_case['stage']}
-Strategy: {use_case['strategy']}
 
-=== BUSINESS CONTEXT (BU Intelligence Foundation) ===
-{bu_intelligence[:8000]}
-[... full context available ...]
+CONTEXT: {bu_context[:3000]}
 
-=== EXTERNAL RESEARCH DATA ===
-Competitor Intelligence:
-{json.dumps(research_data.get('competitor_intelligence', {}), indent=2)}
+RESEARCH: {research_summary}
 
-Vendor Solutions:
-{json.dumps(research_data.get('vendor_solutions', {}), indent=2)}
+Return JSON with this EXACT structure (each field must contain properly formatted text with sub-headings):
 
-Industry Benchmarks:
-{json.dumps(research_data.get('industry_benchmarks', {}), indent=2)}
-
-=== YOUR TASK ===
-Enrich this use case with consulting-grade content for the following sections. Each section MUST use the specified sub-headings and provide 3-5 quantified, detailed sentences per sub-heading.
-
-**Section 1: Detailed Enriched Use Case Description**
-Sub-headings:
-- Business Context & Problem:
-- Solution & Technology:
-- Integration & Process:
-- Current Status & Outcomes:
-
-**Section 2: Enriched Business Outcomes/Deliverables**
-Sub-headings:
-- Productivity & Efficiency:
-- Quality & Consistency:
-- Cost & Financial Impact:
-- Strategic Benefits:
-
-**Section 3: Industry Alignment**
-Sub-headings:
-- Competitive Landscape: (MUST include at least 2-3 named competitors)
-- Technology & Vendors: (MUST include specific vendor names and products)
-- Industry Benchmarks: (MUST include quantified metrics with sources)
-- Strategic Positioning:
-
-**Section 4: Implementation Considerations**
-Sub-headings:
-- Technical & Integration:
-- Change Management:
-- Risk & Compliance:
-- Operational & Scaling:
-
-**Section 5: Suggested Success Metrics (KPIs)**
-Sub-headings:
-- Operational Metrics:
-- Financial Metrics:
-- Quality Metrics:
-- Strategic Metrics:
-
-**Section 6: Information Gaps & Annotation**
-Sub-headings:
-- Source: (List all sources - BU Intelligence, web URLs, reports)
-- Confidence Level: (High/Medium/Low with rationale)
-- Rationale: (Explain methodology and data quality)
-- Information Gaps: (What data is missing or needs validation)
-
-=== CRITICAL REQUIREMENTS ===
-1. Start each sub-heading with the exact label followed by a colon
-2. Provide 3-5 substantive, quantified sentences per sub-heading
-3. Include specific metrics, competitor names, vendor names, and benchmarks
-4. All external claims must reference sources
-5. Maintain consulting-grade quality and depth throughout
-
-=== OUTPUT FORMAT ===
-Provide your response as a JSON object with these keys:
 {{
-  "enriched_name": "Enhanced name for the use case",
-  "detailed_description": "Full section 1 content with all sub-headings",
-  "business_outcomes": "Full section 2 content with all sub-headings",
-  "industry_alignment": "Full section 3 content with all sub-headings",
-  "implementation": "Full section 4 content with all sub-headings",
-  "kpis": "Full section 5 content with all sub-headings",
-  "annotation": "Full section 6 content with all sub-headings"
+  "enriched_name": "AI-Powered [descriptive name]",
+  "detailed_description": "Business Context & Problem:\\n[3-5 sentences with metrics]\\n\\nSolution & Technology:\\n[3-5 sentences]\\n\\nIntegration & Process:\\n[3-5 sentences]\\n\\nCurrent Status & Outcomes:\\n[3-5 sentences with current metrics]",
+  "business_outcomes": "Productivity & Efficiency:\\n[3-5 sentences with % improvements]\\n\\nQuality & Consistency:\\n[3-5 sentences with metrics]\\n\\nCost & Financial Impact:\\n[3-5 sentences with $ amounts]\\n\\nStrategic Benefits:\\n[3-5 sentences]",
+  "industry_alignment": "Competitive Landscape:\\n[3-5 sentences naming 2-3 competitors like LexisNexis, Bloomberg Law]\\n\\nTechnology & Vendors:\\n[3-5 sentences naming vendors like OpenAI, Anthropic, Cohere]\\n\\nIndustry Benchmarks:\\n[3-5 sentences with quantified benchmarks]\\n\\nStrategic Positioning:\\n[3-5 sentences]",
+  "implementation": "Technical & Integration:\\n[3-5 sentences on technical approach]\\n\\nChange Management:\\n[3-5 sentences on adoption]\\n\\nRisk & Compliance:\\n[3-5 sentences on risks]\\n\\nOperational & Scaling:\\n[3-5 sentences on scaling]",
+  "kpis": "Operational Metrics:\\n- Time savings: [X%]\\n- Volume increase: [X%]\\n\\nFinancial Metrics:\\n- Cost reduction: [$X]\\n- ROI: [X%]\\n\\nQuality Metrics:\\n- Accuracy: [X%]\\n- Consistency: [X%]\\n\\nStrategic Metrics:\\n- Market position\\n- Competitive advantage",
+  "annotation": "Source:\\n- BU Intelligence Document\\n- {research_summary[:100]}\\n\\nConfidence Level: Medium\\n\\nRationale: Based on BU context and competitive research\\n\\nInformation Gaps: Need actual implementation metrics and ROI data"
 }}
 
-Begin your enrichment now:"""
+CRITICAL RULES:
+1. Return ONLY the JSON object - no markdown, no ```json blocks
+2. Start with {{ and end with }}
+3. Use \\n\\n for paragraph breaks between sub-headings
+4. Include specific numbers, percentages, and competitor names
+5. Each sub-heading MUST start with exact label followed by colon
+
+Begin JSON response:"""
 
         return prompt
+
+    def _format_research_summary(self, research_data: Dict[str, Any]) -> str:
+        """Format research data concisely"""
+        summary_parts = []
+
+        comp_intel = research_data.get('competitor_intelligence', {})
+        if comp_intel:
+            summary_parts.append(f"Competitors: {str(comp_intel)[:200]}")
+
+        vendors = research_data.get('vendor_solutions', {})
+        if vendors:
+            summary_parts.append(f"Vendors: {str(vendors)[:200]}")
+
+        benchmarks = research_data.get('industry_benchmarks', {})
+        if benchmarks:
+            summary_parts.append(f"Benchmarks: {str(benchmarks)[:200]}")
+
+        return "; ".join(summary_parts)[:500]
+
+    def _clean_json_response(self, response_text: str) -> str:
+        """Clean and extract JSON from response text"""
+        import re
+
+        # Remove markdown code blocks
+        response_text = re.sub(r'```json\s*', '', response_text)
+        response_text = re.sub(r'```\s*', '', response_text)
+
+        # Find JSON object
+        json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+        if json_match:
+            return json_match.group(0)
+
+        return response_text
 
     def enrich_use_case(
         self,
@@ -134,9 +117,10 @@ Begin your enrichment now:"""
         prompt = self._create_enrichment_prompt(use_case, bu_intelligence, research_data)
 
         try:
+            # Use reduced max_tokens to stay under rate limit
             message = self.api_client.create_message(
                 model=MODEL,
-                max_tokens=MAX_TOKENS,
+                max_tokens=4000,  # Reduced from MAX_TOKENS to avoid rate limits
                 messages=[{"role": "user", "content": prompt}]
             )
 
@@ -145,20 +129,34 @@ Begin your enrichment now:"""
                 if hasattr(block, 'text'):
                     response_text += block.text
 
-            # Try to parse as JSON, fallback to raw text
+            # Clean and extract JSON
+            cleaned_json = self._clean_json_response(response_text)
+
+            # Try to parse as JSON
             try:
-                enriched_data = json.loads(response_text)
-            except json.JSONDecodeError:
-                # If not JSON, create structured output from text
+                enriched_data = json.loads(cleaned_json)
+                print(f"    [OK] Successfully parsed JSON response")
+            except json.JSONDecodeError as e:
+                print(f"    ! Warning: Could not parse JSON: {e}")
+                print(f"    ! Response preview: {response_text[:300]}...")
+
+                # Create default structure with error info
                 enriched_data = {
                     "enriched_name": use_case['original_name'],
-                    "detailed_description": response_text,
-                    "business_outcomes": "",
-                    "industry_alignment": "",
-                    "implementation": "",
-                    "kpis": "",
-                    "annotation": "Source: BU Intelligence, Claude enrichment\nConfidence Level: Medium\nRationale: Generated from provided context\nInformation Gaps: May require additional validation"
+                    "detailed_description": f"ERROR: Failed to parse LLM response.\n\nRaw response:\n{response_text[:800]}",
+                    "business_outcomes": "ERROR: JSON parsing failed",
+                    "industry_alignment": "ERROR: JSON parsing failed",
+                    "implementation": "ERROR: JSON parsing failed",
+                    "kpis": "ERROR: JSON parsing failed",
+                    "annotation": f"Source: Parse Error\nConfidence Level: Low\nRationale: Could not extract JSON from LLM response\nInformation Gaps: Full re-enrichment needed"
                 }
+
+            # Validate required fields
+            required_fields = ['enriched_name', 'detailed_description', 'business_outcomes',
+                              'industry_alignment', 'implementation', 'kpis', 'annotation']
+            for field in required_fields:
+                if field not in enriched_data:
+                    enriched_data[field] = f"ERROR: Missing field {field}"
 
             return {
                 "success": True,
@@ -167,7 +165,7 @@ Begin your enrichment now:"""
             }
 
         except Exception as e:
-            print(f"    ✗ Error enriching use case: {e}")
+            print(f"    [ERROR] Error enriching use case: {e}")
             return {
                 "success": False,
                 "original_use_case": use_case,
@@ -196,7 +194,15 @@ Begin your enrichment now:"""
             enriched = self.enrich_use_case(use_case, bu_intelligence, research_for_case)
             enriched_use_cases.append(enriched)
 
-        print("\n✓ USE CASE ENRICHMENT COMPLETE")
+            # Add delay between use cases to avoid rate limiting
+            # With 4000 tokens output + ~2000 input = ~6000 tokens per call
+            # At 100k tokens/min limit, wait ~4 seconds between calls to be safe
+            # Use 30 seconds to be extra conservative and avoid rate limits
+            if i < len(use_cases) - 1:  # Don't wait after the last one
+                print(f"  [THROTTLE] Waiting 30s before next enrichment to avoid rate limits...")
+                time.sleep(30)
+
+        print("\n[OK] USE CASE ENRICHMENT COMPLETE")
         print("=" * 80)
 
         return {

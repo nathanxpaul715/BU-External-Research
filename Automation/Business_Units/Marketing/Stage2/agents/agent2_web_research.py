@@ -2,6 +2,7 @@
 Performs external research to validate and enhance use case enrichment
 """
 import pandas as pd
+import time
 from typing import Dict, List, Any
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -225,11 +226,16 @@ Format as structured JSON with keys: metrics, reports, best_practices, trends, s
         bu_intelligence = ingestion_data["bu_intelligence"]
 
         all_research = []
-        for use_case in use_cases:
+        for i, use_case in enumerate(use_cases):
             research = self.research_use_case(use_case, bu_intelligence)
             all_research.append(research)
 
-        print("\n✓ WEB RESEARCH COMPLETE")
+            # Add delay between use cases to avoid rate limiting
+            if i < len(use_cases) - 1:  # Don't wait after the last one
+                print(f"  [THROTTLE] Waiting 10s before next research to avoid rate limits...")
+                time.sleep(10)
+
+        print("\n[OK] WEB RESEARCH COMPLETE")
         print("=" * 80)
 
         return {

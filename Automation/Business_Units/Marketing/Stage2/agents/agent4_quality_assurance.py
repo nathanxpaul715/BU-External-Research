@@ -15,7 +15,10 @@ class QualityAssuranceAgent:
         """Check if all required sub-headings are present"""
         missing = []
         for sub_heading in expected_sub_headings:
-            if sub_heading not in section:
+            # Check for sub-heading with colon (more flexible matching)
+            # Allow for variations like "Sub-heading:" or "Sub-heading:\n"
+            pattern = sub_heading.replace('&', '&').strip()
+            if pattern not in section and f"{pattern}:" not in section:
                 missing.append(sub_heading)
         return len(missing) == 0, missing
 
@@ -211,10 +214,10 @@ class QualityAssuranceAgent:
 
             if validation["passed"]:
                 passed_count += 1
-                print(f"    ✓ {validation['use_case_name']}")
+                print(f"    [PASS] {validation['use_case_name']}")
             else:
                 failed_count += 1
-                print(f"    ✗ {validation['use_case_name']}")
+                print(f"    [FAIL] {validation['use_case_name']}")
                 # Handle both error format and issues format
                 if "error" in validation:
                     print(f"        - Error: {validation['error']}")
@@ -224,7 +227,7 @@ class QualityAssuranceAgent:
 
             if validation.get("warnings"):
                 for warning in validation["warnings"]:
-                    print(f"        ⚠ {warning}")
+                    print(f"        [WARN] {warning}")
 
         print(f"\n{'=' * 80}")
         print(f"VALIDATION SUMMARY: {passed_count} passed, {failed_count} failed")

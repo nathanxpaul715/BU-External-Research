@@ -28,8 +28,8 @@ MODEL = "claude-sonnet-4-20250514"
 
 # Processing configuration
 BATCH_SIZE = 5  # Process 5 use cases at a time if token limits apply
-MAX_TOKENS = 8000  # Max tokens per API call
-WEB_SEARCH_MAX_USES = 10  # Max web searches per enrichment
+MAX_TOKENS = 4000  # Max tokens per API call (reduced to avoid rate limits)
+WEB_SEARCH_MAX_USES = 5  # Max web searches per enrichment (reduced to avoid rate limits)
 
 # Output column definitions
 OUTPUT_COLUMNS = [

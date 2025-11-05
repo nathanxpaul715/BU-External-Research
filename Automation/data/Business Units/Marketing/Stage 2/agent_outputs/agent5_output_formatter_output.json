@@ -1,0 +1,18 @@
+{
+  "output_file": "C:\\Users\\6136942\\OneDrive - Thomson Reuters Incorporated\\Documents\\bu_repo\\BU-External-Research\\data\\Business Units\\Marketing\\Stage 2\\2b-MKTG-Existing Use Cases Enriched.xlsx",
+  "rows_written": 3,
+  "columns": [
+    "Function",
+    "Original Use Case Name",
+    "Enriched Use Case Name",
+    "Original Use Case Description",
+    "Detailed Enriched Use Case Description",
+    "Original Outcomes/Deliverable",
+    "Enriched Business Outcomes/Deliverables",
+    "Industry Alignment",
+    "Implementation Considerations",
+    "Suggested Success Metrics (KPIs)",
+    "Information Gaps & Annotation"
+  ],
+  "timestamp": "2025-11-05T11:09:24.114043"
+}
