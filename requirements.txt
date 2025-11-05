@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 anthropic
 requests
 python-docx
@@ -34,3 +35,130 @@ tqdm>=4.66.0
 
 # Optional but recommended
 tiktoken>=0.5.0
+=======
+# ============================================    
+# HACKATHON: BU Research Automation    
+# Tech Stack: AWS Bedrock, AgentCore, LangChain, LangGraph    
+# ============================================  
+# Note: No version pinning - pip will auto-resolve compatible versions
+    
+# Core Framework - Multi-Agent Orchestration    
+# --------------------------------------------    
+langchain  # Core LangChain framework for building LLM apps  
+langchain-core  # Core abstractions and runtime for LangChain  
+langchain-community  # Community-contributed integrations  
+langgraph  # Build stateful multi-agent workflows with graphs  
+langchain-anthropic  # LangChain integration for Anthropic/Claude  
+langsmith  # LangChain observability and monitoring platform
+    
+# AWS Services Integration    
+# --------------------------------------------    
+boto3  # AWS SDK for Python (Bedrock, S3, etc.)  
+botocore  # Low-level AWS service access  
+aioboto3  # Async AWS SDK for parallel API calls  
+langchain-aws  # LangChain AWS integrations (Bedrock connector)
+    
+# LLM Providers    
+# --------------------------------------------    
+anthropic  # Direct Anthropic SDK for Claude API (for your token auth)
+    
+# Embeddings & Vector Database    
+# --------------------------------------------    
+openai  # OpenAI SDK for text-embedding-3-large embeddings  
+chromadb  # Local vector database for semantic search  
+sentence-transformers  # Alternative embedding models (all-MiniLM, etc.)  
+tiktoken  # Token counting for OpenAI models (cost estimation)
+    
+# Document Processing    
+# --------------------------------------------    
+python-docx  # Read/write DOCX files (Stage 0/1 inputs)  
+PyPDF2  # Parse PDF files  
+pypdf  # Alternative PDF parser with better Unicode support  
+python-pptx  # PowerPoint file processing (if needed)  
+unstructured  # Advanced multi-format document parsing (optional)  
+pdf2image  # Convert PDF pages to images (for OCR)
+    
+# Excel & Data Processing    
+# --------------------------------------------    
+openpyxl  # Read/write modern Excel files (.xlsx) for Stage 2/3 outputs  
+pandas  # Data manipulation and analysis (DataFrames)  
+numpy  # Numerical operations and array processing  
+xlrd  # Legacy Excel file support (.xls files)  
+xlsxwriter  # Advanced Excel writing with formatting/charts
+    
+# Streamlit UI    
+# --------------------------------------------    
+streamlit  # Web-based UI framework for rapid prototyping  
+streamlit-extras  # Additional Streamlit components (badges, cards, etc.)  
+streamlit-aggrid  # Interactive data tables with filtering/sorting  
+streamlit-option-menu  # Enhanced navigation menus  
+plotly  # Interactive charts and visualizations
+    
+# Web Research    
+# --------------------------------------------    
+requests  # HTTP library for API calls and web scraping  
+beautifulsoup4  # HTML/XML parsing and web scraping  
+lxml  # Fast XML/HTML parser (backend for BeautifulSoup)  
+selenium  # Browser automation for JavaScript-heavy sites  
+duckduckgo-search  # Free web search API (no API key needed)  
+googlesearch-python  # Google search scraping (use with caution)
+    
+# Data Validation & Schema    
+# --------------------------------------------    
+pydantic  # Data validation and settings management (used by LangChain)  
+typing-extensions  # Backported typing features  
+pydantic-settings  # Environment-based settings management  
+jsonschema  # JSON schema validation
+    
+# Configuration & Environment    
+# --------------------------------------------    
+python-dotenv  # Load environment variables from .env files  
+pyyaml  # YAML configuration file parsing  
+toml  # TOML configuration file support
+    
+# Logging & Monitoring    
+# --------------------------------------------    
+loguru  # Simplified logging with better formatting  
+rich  # Beautiful terminal output (colors, tables, progress)  
+tqdm  # Progress bars for long-running operations
+    
+# Utilities    
+# --------------------------------------------    
+tenacity  # Retry logic with exponential backoff (API resilience)  
+aiofiles  # Async file I/O operations  
+httpx  # Modern async HTTP client (alternative to requests)
+    
+# Text Processing    
+# --------------------------------------------    
+nltk  # Natural language toolkit (tokenization, stemming)  
+spacy  # Industrial-strength NLP (entity recognition, parsing)  
+textstat  # Text statistics (word count, readability scores)
+    
+# Date/Time    
+# --------------------------------------------    
+python-dateutil  # Advanced date parsing and manipulation  
+pytz  # Timezone definitions and conversions
+    
+# AWS-Specific (Additional)    
+# --------------------------------------------    
+s3fs  # Pythonic file interface to S3  
+awscli  # AWS command-line tools (for debugging)
+    
+# Testing & Development    
+# --------------------------------------------    
+pytest  # Unit testing framework  
+pytest-asyncio  # Async test support for pytest  
+black  # Opinionated Python code formatter  
+flake8  # Code linting and style checking  
+mypy  # Static type checker
+    
+# Performance & Caching    
+# --------------------------------------------    
+redis  # In-memory caching (if using Redis server)  
+diskcache  # SQLite-based local disk caching  
+joblib  # Parallel processing and function memoization
+    
+# Security    
+# --------------------------------------------    
+cryptography  # Encryption utilities and secure hashing
+>>>>>>> krishna_work
