@@ -14,6 +14,7 @@ from config import (
     MAX_TOKENS
 )
 from utils.api_client import get_api_client
+from utils.rag_tools import get_rag_context_for_use_case, is_rag_available
 
 
 class UseCaseEnricherAgent:
@@ -114,7 +115,19 @@ Begin JSON response:"""
         """Enrich a single use case"""
         print(f"  Enriching: {use_case['original_name']}")
 
-        prompt = self._create_enrichment_prompt(use_case, bu_intelligence, research_data)
+        # Use RAG-enhanced context if available, otherwise use provided bu_intelligence
+        if is_rag_available():
+            bu_context = get_rag_context_for_use_case(use_case, context_type="enrichment")
+            if bu_context:
+                print(f"  [RAG] Using {len(bu_context)} chars of RAG-enhanced context")
+            else:
+                bu_context = bu_intelligence[:6000]
+                print(f"  [Fallback] Using truncated BU intelligence")
+        else:
+            bu_context = bu_intelligence
+            print(f"  [Standard] Using provided BU intelligence")
+
+        prompt = self._create_enrichment_prompt(use_case, bu_context, research_data)
 
         try:
             # Use reduced max_tokens to stay under rate limit

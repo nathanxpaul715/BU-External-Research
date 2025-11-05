@@ -8,6 +8,7 @@ import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import ANTHROPIC_API_URL, WORKSPACE_ID, MODEL, WEB_SEARCH_MAX_USES
 from utils.api_client import get_api_client
+from utils.rag_tools import get_rag_context_for_use_case, is_rag_available
 
 
 class WebResearchAgent:
@@ -196,17 +197,29 @@ Format as structured JSON with keys: metrics, reports, best_practices, trends, s
         """Perform comprehensive research for a single use case"""
         print(f"\nResearching: {use_case['original_name']}")
 
+        # Use RAG-enhanced context if available, otherwise use provided bu_intelligence
+        if is_rag_available():
+            bu_context = get_rag_context_for_use_case(use_case, context_type="research")
+            if bu_context:
+                print(f"  [RAG] Using {len(bu_context)} chars of RAG-enhanced context")
+            else:
+                bu_context = bu_intelligence[:2000]
+                print(f"  [Fallback] Using truncated BU intelligence")
+        else:
+            bu_context = bu_intelligence
+            print(f"  [Standard] Using provided BU intelligence")
+
         research_results = {
             "use_case_name": use_case["original_name"],
             "competitor_intelligence": self.research_competitor_intelligence(
                 use_case["original_name"],
                 use_case["original_description"],
-                bu_intelligence
+                bu_context
             ),
             "vendor_solutions": self.research_vendor_solutions(
                 use_case["original_name"],
                 use_case["ai_tools"],
-                bu_intelligence
+                bu_context
             ),
             "industry_benchmarks": self.research_industry_benchmarks(
                 use_case["original_name"],

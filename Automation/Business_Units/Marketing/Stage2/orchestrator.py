@@ -19,19 +19,62 @@ from agents import (
     OutputFormatterAgent
 )
 
+# Import RAG tools (centralized)
+from utils.rag_tools import initialize_rag, is_rag_available
+
+# Import config for file paths
+from config import BU_INTELLIGENCE_PATH, OPTIONAL_FILES
+
 
 class Stage2Orchestrator:
     """Orchestrates all agents for Stage 2 automation"""
 
-    def __init__(self, output_dir: str = None):
+    def __init__(self, output_dir: str = None, use_rag: bool = True):
         self.start_time = None
         self.end_time = None
         self.results = {}
+        self.use_rag = use_rag
         # Set output directory for intermediate JSON files
         if output_dir is None:
             output_dir = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'Business Units', 'Marketing', 'Stage 2', 'agent_outputs')
         self.output_dir = output_dir
         os.makedirs(self.output_dir, exist_ok=True)
+
+    def initialize_rag_service(self, force_rebuild: bool = False) -> bool:
+        """Initialize RAG Service using centralized tools
+
+        Args:
+            force_rebuild: Force rebuild of vector store even if cache exists
+
+        Returns:
+            True if successful, False otherwise
+        """
+        if not self.use_rag:
+            print("[RAG] RAG Service disabled (use_rag=False)")
+            return False
+
+        try:
+            print("\n[*] Initializing RAG Service...")
+            print("    Building FAISS vector store from BU Intelligence documents...")
+
+            # Use centralized initialize_rag function
+            success = initialize_rag(
+                bu_intelligence_path=BU_INTELLIGENCE_PATH,
+                optional_files=OPTIONAL_FILES,
+                force_rebuild=force_rebuild
+            )
+
+            if success:
+                print("[OK] RAG Service initialized and ready")
+                return True
+            else:
+                print("[WARN] RAG Service initialization failed - falling back to non-RAG mode")
+                return False
+
+        except Exception as e:
+            print(f"[ERROR] RAG Service initialization error: {e}")
+            print(f"    Falling back to non-RAG mode")
+            return False
 
     def print_banner(self, text: str):
         """Print a formatted banner"""
@@ -86,6 +129,13 @@ class Stage2Orchestrator:
         print(f"Start Time: {self.start_time.strftime('%Y-%m-%d %H:%M:%S')}\n")
 
         try:
+            # AGENT 1.5: Initialize RAG Service (build vector store once)
+            rag_initialized = self.initialize_rag_service()
+            if rag_initialized:
+                print("[OK] RAG Service ready for use by Agent 2 and Agent 3\n")
+            else:
+                print("[WARN] Proceeding without RAG enhancement\n")
+
             # AGENT 1: Data Ingestion
             print("\n[*] Running Agent 1: Data Ingestion...")
             agent1 = DataIngestionAgent()
@@ -102,6 +152,8 @@ class Stage2Orchestrator:
             # AGENT 2: Web Research (Optional - can be skipped for faster processing)
             if not skip_web_research:
                 print("\n[*] Running Agent 2: Web Research...")
+                if is_rag_available():
+                    print("    [RAG] RAG-enhanced context will be used automatically")
                 agent2 = WebResearchAgent()
                 research_data = agent2.run(ingestion_data)
                 self.results['agent2_web_research'] = research_data
@@ -115,6 +167,8 @@ class Stage2Orchestrator:
 
             # AGENT 3: Use Case Enrichment
             print("\n[*] Running Agent 3: Use Case Enricher...")
+            if is_rag_available():
+                print("    [RAG] RAG-enhanced context will be used automatically")
             agent3 = UseCaseEnricherAgent()
             enrichment_data = agent3.run(ingestion_data, research_data)
             self.results['agent3_enrichment'] = enrichment_data
