@@ -1,7 +1,6 @@
 import anthropic
 import requests
 import json
- 
 payload = {
     "workspace_id": "ExternalResei8Dz",
 }
@@ -18,6 +17,9 @@ if 'anthropic_api_key' in Credentials:
     client = anthropic.Anthropic(
         # defaults to os.environ.get("ANTHROPIC_API_KEY")
         api_key=Credentials["anthropic_api_key"],
+        default_headers={
+            "anthropic-beta": "files-api-2025-04-14"
+        }
     )
     message = client.messages.create(
     model="claude-sonnet-4-20250514",
@@ -34,5 +36,12 @@ if 'anthropic_api_key' in Credentials:
     for textblock in message.content:
         if hasattr(textblock, 'text'):
             print(textblock.text)
+
+    # Upload file using the Files API
+    file_response = client.beta.files.upload(
+        file=("BU_Intelligence.docx", open(r"C:\Users\6135687\Github\Agents\BU-External-Research\data\Business Units\Marketing\Stage 1\1b-MKTG-BU Intelligence.docx", "rb"), "application/docx"),
+        #purpose="user_upload"
+    )
+    print(f"File uploaded successfully. File ID: {file_response.id}")
 else:
     print(Credentials)
