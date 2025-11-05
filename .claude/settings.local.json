@@ -5,7 +5,10 @@
       "Bash(find:*)",
       "Bash(dir:*)",
       "Bash(nul)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(pip install:*)",
+      "Bash(findstr:*)",
+      "Bash(pip show:*)"
     ],
     "deny": [],
     "ask": []

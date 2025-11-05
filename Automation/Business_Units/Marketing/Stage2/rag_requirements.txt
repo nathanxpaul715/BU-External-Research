@@ -1,0 +1,22 @@
+# Minimal RAG Requirements (no C++ compiler needed)
+# Install with: pip install -r rag_requirements.txt
+
+# Core RAG dependencies
+faiss-cpu>=1.7.4
+sentence-transformers>=2.2.0
+langchain>=0.1.0
+langchain-community>=0.0.10
+langchain-core>=0.1.0
+langchain-text-splitters>=1.0.0
+
+# Document loading
+pypdf>=3.0.0
+pymupdf>=1.23.0
+python-docx>=1.0.0
+docx2txt>=0.8
+
+# Text processing
+tiktoken>=0.5.0
+
+# Utilities
+numpy>=1.24.0
