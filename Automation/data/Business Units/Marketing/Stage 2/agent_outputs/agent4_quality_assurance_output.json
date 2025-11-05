@@ -1,0 +1,25 @@
+{
+  "validation_results": [
+    {
+      "use_case_name": "Marketing Content Generation",
+      "passed": true,
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "use_case_name": "Marketing Content Generation/Augmentation",
+      "passed": true,
+      "issues": [],
+      "warnings": []
+    },
+    {
+      "use_case_name": "Improve Information Findability: Unlocking Insights and Efficiency​",
+      "passed": true,
+      "issues": [],
+      "warnings": []
+    }
+  ],
+  "passed_count": 3,
+  "failed_count": 0,
+  "all_passed": true
+}
