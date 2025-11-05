@@ -43,14 +43,14 @@ class DataIngestionAgent:
                     full_text.append(row_text)
 
         self.bu_intelligence = "\n\n".join(full_text)
-        print(f"✓ Loaded BU Intelligence: {len(self.bu_intelligence)} characters")
+        print(f"[OK] Loaded BU Intelligence: {len(self.bu_intelligence)} characters")
         return self.bu_intelligence
 
     def load_use_cases(self) -> pd.DataFrame:
         """Load AI Use Cases CSV"""
         print("Loading AI Use Cases CSV...")
         self.use_cases = pd.read_csv(USE_CASES_CSV_PATH)
-        print(f"✓ Loaded {len(self.use_cases)} use cases")
+        print(f"[OK] Loaded {len(self.use_cases)} use cases")
         print(f"  Columns: {list(self.use_cases.columns)}")
         return self.use_cases
 
@@ -58,7 +58,7 @@ class DataIngestionAgent:
         """Load Function Updates CSV"""
         print("Loading Function Updates CSV...")
         self.function_updates = pd.read_csv(FUNCTION_UPDATES_CSV_PATH)
-        print(f"✓ Loaded {len(self.function_updates)} function updates")
+        print(f"[OK] Loaded {len(self.function_updates)} function updates")
         return self.function_updates
 
     def load_optional_files(self) -> Dict[str, str]:
@@ -70,11 +70,11 @@ class DataIngestionAgent:
                     doc = Document(path)
                     text = "\n\n".join([p.text for p in doc.paragraphs if p.text.strip()])
                     self.optional_data[key] = text
-                    print(f"✓ Loaded optional file: {key}")
+                    print(f"[OK] Loaded optional file: {key}")
                 except Exception as e:
-                    print(f"✗ Failed to load {key}: {e}")
+                    print(f"[FAIL] Failed to load {key}: {e}")
             else:
-                print(f"✗ Optional file not found: {key}")
+                print(f"[SKIP] Optional file not found: {key}")
         return self.optional_data
 
     def extract_key_context(self) -> Dict[str, Any]:
@@ -97,7 +97,7 @@ class DataIngestionAgent:
         context["has_strategy_section"] = "STRATEGY" in bu_text or "STRATEGIC" in bu_text
 
         self.context = context
-        print(f"✓ Context extracted: {len(context)} elements")
+        print(f"[OK] Context extracted: {len(context)} elements")
         return context
 
     def prepare_use_cases_for_enrichment(self) -> List[Dict[str, Any]]:
@@ -119,7 +119,7 @@ class DataIngestionAgent:
             }
             use_cases_list.append(use_case)
 
-        print(f"✓ Prepared {len(use_cases_list)} use cases for enrichment")
+        print(f"[OK] Prepared {len(use_cases_list)} use cases for enrichment")
         return use_cases_list
 
     def run(self) -> Dict[str, Any]:
@@ -148,7 +148,7 @@ class DataIngestionAgent:
             "context": self.context
         }
 
-        print("\n✓ DATA INGESTION COMPLETE")
+        print("\n[OK] DATA INGESTION COMPLETE")
         print("=" * 80)
         return result
 

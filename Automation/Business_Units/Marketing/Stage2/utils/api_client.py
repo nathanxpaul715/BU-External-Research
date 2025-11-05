@@ -88,7 +88,7 @@ class AnthropicAPIClient:
 
         This wraps the Anthropic messages.create() call with:
         - Automatic token refresh
-        - Retry logic for rate limit errors
+        - Retry logic for rate limit errors with long waits
 
         Args:
             **kwargs: Arguments to pass to client.messages.create()
@@ -97,7 +97,7 @@ class AnthropicAPIClient:
             Message response from Anthropic API
         """
         max_retries = 3
-        retry_delay = 2  # seconds
+        retry_delay = 60  # Start with 60 seconds to wait for rate limit window to pass
 
         for attempt in range(max_retries):
             try:
@@ -107,18 +107,21 @@ class AnthropicAPIClient:
 
             except anthropic.RateLimitError as e:
                 if attempt < max_retries - 1:
-                    print(f"Rate limit hit, refreshing token and retrying... (attempt {attempt + 1}/{max_retries})")
+                    print(f"[RATE LIMIT] Hit workspace limit of 100k tokens/min")
+                    print(f"[RATE LIMIT] Waiting {retry_delay}s for rate limit window to reset... (attempt {attempt + 1}/{max_retries})")
                     # Force token refresh
                     with self.lock:
                         self._refresh_token()
                     time.sleep(retry_delay)
-                    retry_delay *= 2  # Exponential backoff
+                    retry_delay = 60  # Keep at 60s since we need to wait for the 1-minute window
                 else:
-                    print(f"Rate limit error after {max_retries} attempts")
+                    print(f"[ERROR] Rate limit error after {max_retries} attempts")
+                    print(f"[ERROR] The workspace rate limit is 100,000 tokens per minute")
+                    print(f"[ERROR] Consider reducing max_tokens or adding delays between requests")
                     raise
 
             except Exception as e:
-                print(f"API error: {e}")
+                print(f"[ERROR] API error: {e}")
                 raise
 
         raise Exception("Failed to create message after all retries")
@@ -143,6 +146,6 @@ def get_api_client(workspace_id: str, token_url: str) -> AnthropicAPIClient:
 
     if _global_client is None:
         _global_client = AnthropicAPIClient(workspace_id, token_url)
-        print("✓ Anthropic API client initialized with TR token endpoint")
+        print("[OK] Anthropic API client initialized with TR token endpoint")
 
     return _global_client

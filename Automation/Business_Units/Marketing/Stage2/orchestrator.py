@@ -3,6 +3,7 @@ Coordinates all agents to execute the complete Stage 2 enrichment process
 """
 import sys
 import os
+import json
 import traceback
 from datetime import datetime
 from typing import Dict, Any
@@ -22,10 +23,15 @@ from agents import (
 class Stage2Orchestrator:
     """Orchestrates all agents for Stage 2 automation"""
 
-    def __init__(self):
+    def __init__(self, output_dir: str = None):
         self.start_time = None
         self.end_time = None
         self.results = {}
+        # Set output directory for intermediate JSON files
+        if output_dir is None:
+            output_dir = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data', 'Business Units', 'Marketing', 'Stage 2', 'agent_outputs')
+        self.output_dir = output_dir
+        os.makedirs(self.output_dir, exist_ok=True)
 
     def print_banner(self, text: str):
         """Print a formatted banner"""
@@ -34,6 +40,37 @@ class Stage2Orchestrator:
         print(f"  {text}")
         print("=" * 80)
         print()
+
+    def save_agent_output(self, agent_name: str, data: Dict[str, Any]):
+        """Save agent output to JSON file for inspection"""
+        output_file = os.path.join(self.output_dir, f"{agent_name}_output.json")
+
+        # Create a serializable version of the data
+        serializable_data = self._make_serializable(data)
+
+        try:
+            with open(output_file, 'w', encoding='utf-8') as f:
+                json.dump(serializable_data, f, indent=2, ensure_ascii=False)
+            print(f"    [SAVED] Agent output: {output_file}")
+        except Exception as e:
+            print(f"    [WARN] Could not save agent output: {e}")
+
+    def _make_serializable(self, obj):
+        """Convert object to JSON-serializable format"""
+        if isinstance(obj, dict):
+            return {k: self._make_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._make_serializable(item) for item in obj]
+        elif hasattr(obj, 'to_dict'):  # pandas DataFrame/Series
+            return obj.to_dict()
+        elif hasattr(obj, '__dict__'):  # custom objects
+            return str(obj)
+        else:
+            try:
+                json.dumps(obj)
+                return obj
+            except (TypeError, ValueError):
+                return str(obj)
 
     def run(self, skip_web_research: bool = False) -> Dict[str, Any]:
         """Execute the complete Stage 2 enrichment process
@@ -50,61 +87,73 @@ class Stage2Orchestrator:
 
         try:
             # AGENT 1: Data Ingestion
-            print("\n🔄 Running Agent 1: Data Ingestion...")
+            print("\n[*] Running Agent 1: Data Ingestion...")
             agent1 = DataIngestionAgent()
             ingestion_data = agent1.run()
             self.results['agent1_data_ingestion'] = ingestion_data
-            print("✅ Agent 1 Complete\n")
+            self.save_agent_output("agent1_data_ingestion", {
+                "context": ingestion_data["context"],
+                "num_use_cases": len(ingestion_data["use_cases"]),
+                "use_cases": ingestion_data["use_cases"],
+                "bu_intelligence_length": len(ingestion_data["bu_intelligence"])
+            })
+            print("[OK] Agent 1 Complete\n")
 
             # AGENT 2: Web Research (Optional - can be skipped for faster processing)
             if not skip_web_research:
-                print("\n🔄 Running Agent 2: Web Research...")
+                print("\n[*] Running Agent 2: Web Research...")
                 agent2 = WebResearchAgent()
                 research_data = agent2.run(ingestion_data)
                 self.results['agent2_web_research'] = research_data
-                print("✅ Agent 2 Complete\n")
+                self.save_agent_output("agent2_web_research", research_data)
+                print("[OK] Agent 2 Complete\n")
             else:
-                print("\n⏭️  Skipping Agent 2: Web Research (as requested)")
+                print("\n[SKIP] Skipping Agent 2: Web Research (as requested)")
                 research_data = {"research_results": []}
                 self.results['agent2_web_research'] = {"skipped": True}
+                self.save_agent_output("agent2_web_research", {"skipped": True})
 
             # AGENT 3: Use Case Enrichment
-            print("\n🔄 Running Agent 3: Use Case Enricher...")
+            print("\n[*] Running Agent 3: Use Case Enricher...")
             agent3 = UseCaseEnricherAgent()
             enrichment_data = agent3.run(ingestion_data, research_data)
             self.results['agent3_enrichment'] = enrichment_data
-            print("✅ Agent 3 Complete\n")
+            self.save_agent_output("agent3_enrichment", enrichment_data)
+            print("[OK] Agent 3 Complete\n")
 
             # AGENT 4: Quality Assurance
-            print("\n🔄 Running Agent 4: Quality Assurance...")
+            print("\n[*] Running Agent 4: Quality Assurance...")
             agent4 = QualityAssuranceAgent()
             qa_data = agent4.run(enrichment_data)
             self.results['agent4_qa'] = qa_data
-            print("✅ Agent 4 Complete\n")
+            self.save_agent_output("agent4_quality_assurance", qa_data)
+            print("[OK] Agent 4 Complete\n")
 
             # AGENT 5: Output Formatting
-            print("\n🔄 Running Agent 5: Output Formatter...")
+            print("\n[*] Running Agent 5: Output Formatter...")
             agent5 = OutputFormatterAgent()
             output_data = agent5.run(enrichment_data)
             self.results['agent5_output'] = output_data
-            print("✅ Agent 5 Complete\n")
+            self.save_agent_output("agent5_output_formatter", output_data)
+            print("[OK] Agent 5 Complete\n")
 
             # Final Summary
             self.end_time = datetime.now()
             duration = (self.end_time - self.start_time).total_seconds()
 
             self.print_banner("STAGE 2 AUTOMATION - COMPLETE")
-            print(f"✅ All agents completed successfully!")
-            print(f"\n📊 SUMMARY:")
+            print(f"[OK] All agents completed successfully!")
+            print(f"\n[SUMMARY]:")
             print(f"   - Use Cases Processed: {ingestion_data['context']['num_use_cases']}")
             print(f"   - Use Cases Enriched: {enrichment_data['total_enriched']}")
             print(f"   - QA Passed: {qa_data['passed_count']}/{qa_data['passed_count'] + qa_data['failed_count']}")
             print(f"   - Output File: {output_data['output_file']}")
+            print(f"   - Agent Outputs Dir: {self.output_dir}")
             print(f"   - Duration: {duration:.2f} seconds")
             print(f"   - End Time: {self.end_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
             if not qa_data['all_passed']:
-                print(f"\n⚠️  WARNING: {qa_data['failed_count']} use case(s) failed QA validation")
+                print(f"\n[WARNING] {qa_data['failed_count']} use case(s) failed QA validation")
                 print("   Please review the validation results above for details.")
 
             print("\n" + "=" * 80 + "\n")
@@ -127,7 +176,7 @@ class Stage2Orchestrator:
         except Exception as e:
             self.end_time = datetime.now()
             print("\n" + "=" * 80)
-            print("❌ ERROR: Stage 2 Automation Failed")
+            print("[ERROR] Stage 2 Automation Failed")
             print("=" * 80)
             print(f"\nError: {str(e)}")
             print("\nTraceback:")
