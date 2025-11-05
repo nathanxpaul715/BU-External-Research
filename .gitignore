@@ -53,6 +53,8 @@ nul
 # FAISS index files (can be regenerated)
 *.index
 faiss.index
+rag_cache/
+*.pkl
 
 # Large model files (optional - uncomment if needed)
 # *.bin
