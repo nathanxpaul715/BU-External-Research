@@ -20,7 +20,7 @@ if 'anthropic_api_key' in Credentials:
         api_key=Credentials["anthropic_api_key"],
     )
     message = client.messages.create(
-    model="claude-sonnet-4-20250514",
+    model="claude-sonnet-4-5-20250929",
     max_tokens=1024,
     messages=[
         {"role": "user", "content": "What's today's date and time?"},
